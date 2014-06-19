@@ -20,7 +20,7 @@ class Catchpoint(object):
         - host (str): The host to connect to
         - api_uri (str): The API's connection string
         """
-        self.verbose = True
+        self.verbose = False
         self.host = host
         self.api_uri = api_uri
         self.content_type = "application/json"
