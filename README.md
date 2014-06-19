@@ -7,6 +7,9 @@ Catchpoint has two types of APIs, a push (subscriber) API and a pull REST API. T
 
 ## Requirements
 
+Tested on Python 2.7.5
+
+Modules: 
 * datetime
 * pytz
 * requests
