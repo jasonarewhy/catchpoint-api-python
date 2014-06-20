@@ -7,6 +7,9 @@ Catchpoint has two types of APIs, a push (subscriber) API and a pull REST API. T
 
 ## Requirements
 
+Tested on Python 2.7.5
+
+Modules: 
 * datetime
 * pytz
 * requests
@@ -62,12 +65,12 @@ print cp.favorite_details(creds, myfav)
 #### Relative Time Requests
 Catchpoint's API requires specific UTC formatted timestamps when requesting datasets. These can be made relative by setting `startTime` to a negative integer that represents number of minutes into the past, and set `endTime` to 'now'.
 
-Example:
+Example for retreiving the last 60 minutes of data:
 
 ```python
 cp = catchpoint.Catchpoint()
 myfav = "12345"
-startTime = -5
+startTime = -60
 endTime = "now"
 print cp.favorite_data(creds, myfav, startTime, endTime)
 ```
