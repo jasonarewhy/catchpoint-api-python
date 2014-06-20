@@ -122,7 +122,7 @@ class Catchpoint(object):
                     msg = "When using relative times, startTime must be a negative number (number of minutes minus 'now')."
                     sys.exit(msg)
                 try:
-                    endTime = datetime.datetime.now()
+                    endTime = datetime.datetime.now(pytz.timezone(tz))
                     endTime = endTime.replace(microsecond=0)
                 except pytz.UnknownTimeZoneError:
                     msg = "Unknown Timezone '{0}'\nUse tz database format: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones" .format(tz)
