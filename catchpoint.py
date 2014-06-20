@@ -20,7 +20,7 @@ class Catchpoint(object):
         - host (str): The host to connect to
         - api_uri (str): The API's connection string
         """
-        self.verbose = False
+        self.verbose = True
         self.host = host
         self.api_uri = api_uri
         self.content_type = "application/json"
@@ -86,8 +86,11 @@ class Catchpoint(object):
             self._connection_error(e)
 
         self._debug("URL: " + r.url)
-        r_data = r.json()
-        self._expired_token_check(r_data)
+        try:
+            r_data = r.json()
+            self._expired_token_check(r_data)
+        except TypeError, e:
+            return e
         return r_data
 
     def _expired_token_check(self, data):
