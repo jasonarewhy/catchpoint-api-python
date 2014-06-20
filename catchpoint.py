@@ -128,8 +128,8 @@ class Catchpoint(object):
                     msg = "Unknown Timezone '{0}'\nUse tz database format: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones" .format(tz)
                     sys.exit(msg)
                 startTime = endTime + datetime.timedelta(minutes=int(startTime))
-                startTime = startTime.strftime('%Y-%m-%dT%H:%M:%S%Z')
-                endTime = endTime.strftime('%Y-%m-%dT%H:%M:%S%Z')
+                startTime = startTime.strftime('%Y-%m-%dT%H:%M:%S')
+                endTime = endTime.strftime('%Y-%m-%dT%H:%M:%S')
                 self._debug("endTime: " + str(endTime))
                 self._debug("startTime: " + str(startTime))
 
