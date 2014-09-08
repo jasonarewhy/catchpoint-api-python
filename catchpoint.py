@@ -5,6 +5,10 @@ import pytz
 import requests
 
 
+class CatchpointError(Exception):
+    pass
+
+
 class Catchpoint(object):
 
     def __init__(
@@ -80,6 +84,8 @@ class Catchpoint(object):
         }
         try:
             r = requests.get(uri, headers=headers, params=params, data=data)
+            if r.status_code != 200:
+                raise CatchpointError(r.content)
         except requests.ConnectionError, e:
             self._connection_error(e)
 
