@@ -1,10 +1,12 @@
-#!/usr/bin/env python
-
 import sys
 import base64
 import datetime
 import pytz
 import requests
+
+
+class CatchpointError(Exception):
+    pass
 
 
 class Catchpoint(object):
@@ -82,6 +84,8 @@ class Catchpoint(object):
         }
         try:
             r = requests.get(uri, headers=headers, params=params, data=data)
+            if r.status_code != 200:
+                raise CatchpointError(r.content)
         except requests.ConnectionError, e:
             self._connection_error(e)
 
