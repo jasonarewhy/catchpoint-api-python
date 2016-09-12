@@ -7,7 +7,7 @@ from setuptools import setup
 VERSION = '0.1.1'
 
 # URL to the repository on Github.
-REPO_URL = 'https://github.com/krux/python-krux-aws-event'
+REPO_URL = 'https://github.com/jasonarewhy/catchpoint-api-python'
 
 # Github will generate a tarball as long as you tag your releases, so don't
 # forget to tag!
