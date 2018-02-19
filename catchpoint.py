@@ -171,7 +171,7 @@ class Catchpoint(object):
             'endTime': endTime
         }
 
-        return self._make_request(uri, params)
+        return self._make_request(uri, params=params)
 
     def favorite_charts(self, creds):
         """
@@ -229,7 +229,7 @@ class Catchpoint(object):
         if tests is not None:
             params['tests'] = tests
 
-        return self._make_request(uri, params)
+        return self._make_request(uri, params=params)
 
     def nodes(self, creds):
         """
