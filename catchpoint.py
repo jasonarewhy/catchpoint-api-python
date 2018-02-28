@@ -3,6 +3,7 @@ import base64
 import datetime
 import pytz
 import requests
+import json
 
 
 class CatchpointError(Exception):
@@ -69,7 +70,7 @@ class Catchpoint(object):
         self._debug("TOKEN: " + self._token)
         self._auth = True
 
-    def _make_request(self, uri, params=None, data=None):
+    def _make_request(self, uri, method='get', params=None, data=None):
         """
         Make a request with an auth token.
 
@@ -83,9 +84,22 @@ class Catchpoint(object):
             'Authorization': "Bearer " + base64.b64encode(self._token)
         }
         try:
-            r = requests.get(uri, headers=headers, params=params, data=data)
+            if method == 'get':
+                r = requests.get(
+                    uri,
+                    headers=headers,
+                    params=params,
+                    data=data
+                )
+            if method == 'post':
+                r = requests.post(
+                    uri,
+                    headers=headers,
+                    params=params,
+                    data=data
+                )
             if r.status_code != 200:
-                raise CatchpointError(r.content)
+                raise CatchpointError(r.status_code, r.content)
         except requests.ConnectionError, e:
             self._connection_error(e)
 
@@ -157,7 +171,7 @@ class Catchpoint(object):
             'endTime': endTime
         }
 
-        return self._make_request(uri, params)
+        return self._make_request(uri, params=params)
 
     def favorite_charts(self, creds):
         """
@@ -215,7 +229,7 @@ class Catchpoint(object):
         if tests is not None:
             params['tests'] = tests
 
-        return self._make_request(uri, params)
+        return self._make_request(uri, params=params)
 
     def nodes(self, creds):
         """
@@ -241,5 +255,272 @@ class Catchpoint(object):
         self._debug("Creating node url...")
         uri = "https://{0}/{1}/nodes/{2}" \
             .format(self.host, self.api_uri, node)
+
+        return self._make_request(uri)
+
+    def nodes(self, creds):
+        """
+        Retrieve the list of nodes for the API consumer.
+        """
+        if not self._auth:
+            self._authorize(creds)
+
+        # prepare request
+        self._debug("Creating nodes url...")
+        uri = "https://{0}/{1}/nodes" \
+            .format(self.host, self.api_uri)
+
+        return self._make_request(uri)
+
+    def node_group(self, creds, group):
+        """
+        Retrieve a given node group for the API consumer.
+        """
+        if not self._auth:
+            self._authorize(creds)
+
+        self._debug("Creating node groups url...")
+        uri = "https://{0}/{1}/nodeGroups/{2}" \
+            .format(self.host, self.api_uri, group)
+
+        return self._make_request(uri)
+
+    def node_groups(self, creds):
+        """
+        Retrieve the list of node groups for the API consumer.
+        """
+        if not self._auth:
+            self._authorize(creds)
+
+        # prepare request
+        self._debug("Creating node groups url...")
+        uri = "https://{0}/{1}/nodeGroups" \
+            .format(self.host, self.api_uri)
+
+        return self._make_request(uri)
+
+    def product(self, creds, product):
+        """
+        Retrieve a given product for the API consumer.
+        """
+        if not self._auth:
+            self._authorize(creds)
+
+        self._debug("Creating product url...")
+        uri = "https://{0}/{1}/products/{2}/allSections" \
+            .format(self.host, self.api_uri, product)
+
+        return self._make_request(uri)
+
+    def products(self, creds, params=None):
+        """
+        Retrieve the list of products for the API consumer.
+        """
+        if not self._auth:
+            self._authorize(creds)
+
+        # prepare request
+        self._debug("Creating products url...")
+        uri = "https://{}/{}/products".format(
+            self.host,
+            self.api_uri
+        )
+
+        return self._make_request(uri, params=params)
+
+    def product_create(self, creds, product):
+        """
+        Create a new product.
+        """
+        if not self._auth:
+            self._authorize(creds)
+
+        self._debug("Creating url...")
+        uri = "https://{0}/{1}/products/0" \
+            .format(self.host, self.api_uri)
+
+        return self._make_request(
+            uri,
+            method='post',
+            data=json.dumps(product)
+        )
+
+    def folders(self, creds, params=None):
+        """
+        Retrieve the list of folders for the API consumer.
+        """
+        if not self._auth:
+            self._authorize(creds)
+
+        # prepare request
+        self._debug("Creating folders url...")
+        uri = "https://{0}/{1}/folders".format(
+            self.host,
+            self.api_uri
+        )
+
+        return self._make_request(uri, params=params)
+
+    def folder(self, creds, folder):
+        """
+        Retrieve a given folder for the API consumer.
+        """
+        if not self._auth:
+            self._authorize(creds)
+
+        self._debug("Creating folder url...")
+        uri = "https://{0}/{1}/folders/{2}/allSections" \
+            .format(self.host, self.api_uri, folder)
+
+        return self._make_request(uri)
+
+    def folder_create(self, creds, folder):
+        """
+        Create a new folder.
+        """
+        if not self._auth:
+            self._authorize(creds)
+
+        self._debug("Creating url...")
+        uri = "https://{0}/{1}/folders/0" \
+            .format(self.host, self.api_uri)
+
+        return self._make_request(
+            uri,
+            method='post',
+            data=json.dumps(folder)
+        )
+
+    def folder_create_schedule(self, creds, folder, schedule):
+        """
+        Create a new folder.
+        """
+        if not self._auth:
+            self._authorize(creds)
+
+        self._debug("Creating url...")
+        uri = "https://{}/{}/folders/{}/scheduleSection".format(
+            self.host,
+            self.api_uri,
+            folder
+        )
+
+        return self._make_request(
+            uri,
+            method='post',
+            data=json.dumps(schedule)
+        )
+
+    def tests(self, creds, params=None):
+        """
+        Retrieve the list of tests for the API consumer.
+        """
+        if not self._auth:
+            self._authorize(creds)
+
+        # prepare request
+        self._debug("Creating tests url...")
+        uri = "https://{0}/{1}/tests" \
+            .format(self.host, self.api_uri)
+
+        return self._make_request(uri, params=params)
+
+    def test(self, creds, test):
+        """
+        Retrieve a given test for the API consumer.
+        """
+        if not self._auth:
+            self._authorize(creds)
+
+        self._debug("Creating test url...")
+        uri = "https://{0}/{1}/tests/{2}/allSections" \
+            .format(self.host, self.api_uri, test)
+
+        return self._make_request(uri)
+
+    def test_create(self, creds, test):
+        """
+        Create a new test.
+        """
+        if not self._auth:
+            self._authorize(creds)
+
+        self._debug("Creating url...")
+        uri = "https://{}/{}/tests/0".format(
+            self.host,
+            self.api_uri
+        )
+
+        return self._make_request(
+            uri,
+            method='post',
+            data=json.dumps(test)
+        )
+
+    def test_update_status(self, creds, test_ids, body):
+        """
+        Update test status.
+        """
+        if not self._auth:
+            self._authorize(creds)
+
+        self._debug("Creating url...")
+        uri = "https://{}/{}/tests/updateStatus?tests={}".format(
+            self.host,
+            self.api_uri,
+            test_ids
+        )
+
+        return self._make_request(
+            uri,
+            method='post',
+            data=json.dumps(body)
+        )
+
+    def test_instant(self, creds, test):
+        """
+        Retrieve an instant test for the API consumer.
+        """
+        if not self._auth:
+            self._authorize(creds)
+
+        self._debug("Creating instant test url...")
+        uri = "https://{}/{}/onDemandTest/{}".format(
+            self.host,
+            self.api_uri,
+            test
+        )
+        return self._make_request(uri)
+    
+    def test_instant_run(self, creds, test):
+        """
+        Run an instant test.
+        """
+        if not self._auth:
+            self._authorize(creds)
+
+        self._debug("Creating url...")
+        uri = "https://{}/{}/onDemandTest/0".format(
+            self.host,
+            self.api_uri
+        )
+
+        return self._make_request(
+            uri,
+            method='post',
+            data=json.dumps(test)
+        )
+
+    def divisions(self, creds):
+        """
+        Retrieve the list of divisions for the API consumer.
+        """
+        if not self._auth:
+            self._authorize(creds)
+
+        # prepare request
+        self._debug("Creating divisions url...")
+        uri = "https://{0}/{1}/divisions" \
+            .format(self.host, self.api_uri)
 
         return self._make_request(uri)
